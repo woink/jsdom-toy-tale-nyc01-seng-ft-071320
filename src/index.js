@@ -80,10 +80,5 @@ document.addEventListener("DOMContentLoaded", () => {
             
       fetch(toysUrl + cardId, configObj)
     }
-    
-    })
-
-
-
-  
+    })  
 })
