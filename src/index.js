@@ -1,29 +1,28 @@
 let addToy = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const toysUrl = 'http://localhost:3000/toys'
+  const toysUrl = 'http://localhost:3000/toys/'
   const toyForm = document.querySelector(".add-toy-form")
   const addBtn = document.querySelector("#new-toy-btn");
   const toyFormContainer = document.querySelector(".container");
-  
 
   fetch(toysUrl)
-  .then(resp => resp.json())
-  .then(data => data.forEach(toy => renderToy(toy)))
-  
+    .then(resp => resp.json())
+    .then(data => data.forEach(toy => renderToy(toy)
+    ))
   
   function renderToy(toy) {
     const toyCollection = document.querySelector('#toy-collection')
     const toyDiv = document.createElement("div")
+    toyDiv.dataset.id = toy.id
     toyDiv.className = 'card'
     toyDiv.innerHTML = `
-    <h2>${toy.name}</h2>
+    <h>${toy.name}</h>
     <img src=${toy.image} class="toy-avatar" />
     <p>${toy.likes} Likes </p>
     <button class="like-btn">Like <3</button>
     `
     toyCollection.append(toyDiv)
-
   }
   
   toyForm.addEventListener("submit", e => {
@@ -40,9 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({
         name: name,
         image: image,
+        likes: 0
       })
-    }) .then(resp => resp.json())
-    .then(object => renderToy(object)) 
+    }).then(resp => resp.json())
+      .then(object => renderToy(object))
   })
   
 
@@ -57,13 +57,31 @@ document.addEventListener("DOMContentLoaded", () => {
   })
   
   document.addEventListener('click', e => {
-    if (e.target.className === 'like-btn') {
+    if (e.target.matches('.like-btn')) {
+      let likeHTMLloc = e.target.previousElementSibling
+      let likeText = likeHTMLloc.innerText.split(' ')
+      let likeNum = likeText[0]
+      likeNum++
+      likeText[0] = likeNum
+      likeText = likeText.join(' ')
+      likeHTMLloc.innerText = likeText
       
-    }
-      
+      const button = e.target
+      const cardId = button.parentNode.dataset.id
 
+      const configObj = {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          "accept": "application/json"
+        },
+        body: JSON.stringify({ likes: likeNum })
+      }
+            
+      fetch(toysUrl + cardId, configObj)
+    }
     
-  })
+    })
 
 
 
